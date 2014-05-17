@@ -1,48 +1,80 @@
 includeTargets << grailsScript("_GrailsInit")
 includeTargets << grailsScript("_GrailsClasspath")
 
-target(coveralls: "The description of the script goes here!") {
+USAGE = """
+    coveralls [--report=REPORT] [--token=TOKEN] [--service=SERVICE]
+
+where
+    REPORT          = Cobertura XML coverage report.
+                    (default: grails.plugin.coveralls.report or 'target/test-reports/cobertura/coverage.xml')
+
+    TOKEN           = Coveralls repo token, not required for Travis CI (required for Travis Pro or other CI).
+                    (default: grails.plugin.coveralls.token or COVERALLS_REPO_TOKEN env var)
+
+    SERVICE         = Service name, not required for Travis (automatically detected).
+                    (default: grails.plugin.coverals.service)
+"""
+
+target(coveralls: "Create coverage report and post it to Coveralls.io") {
     depends(parseArguments)
 
-    COBERTURA_REPORT_PATH = 'target/test-reports/cobertura/coverage.xml'
-
-    //ServiceInfo serviceInfo = ServiceInfoFactory.createFromEnvVar()
-    def serviceInfoFactory = classLoader.loadClass('grails.plugin.coveralls.service.ServiceInfoFactory').newInstance()
-    def serviceInfo = serviceInfoFactory.createFromEnvVar()
-
-    if (serviceInfo == null) {
-        println 'no available CI service'
-        return
+    if (argsMap['help']) {
+        println USAGE
+        exit 0
     }
 
-    println 'service name: ' + serviceInfo.serviceName
-    println 'service job id: ' + serviceInfo.serviceJobId
-    if (serviceInfo.repoToken != null) {
-        println 'repo token: present'
+    def coverallsConfig = config.grails.plugin?.coveralls
+    String reportPath = argsMap['report'] ?: coverallsConfig?.report ?: 'target/test-reports/cobertura/coverage.xml'
+    String repoToken = argsMap['token'] ?: coverallsConfig?.token ?: System.getenv('COVERALLS_REPO_TOKEN')
+    String serviceName = argsMap['service'] ?: coverallsConfig?.service ?: ''
+    def serviceJobId
+
+    if (repoToken) {
+        if (System.getenv('TRAVIS') == 'true' && System.getenv('TRAVIS_JOB_ID') != null) {
+            serviceName = 'travis-pro'
+            serviceJobId = System.getenv('TRAVIS_JOB_ID')
+        } else if (!serviceName) {
+            serviceName = 'other'
+        }
     } else {
-        println 'repo token: null'
+        if (System.getenv('TRAVIS') == 'true' && System.getenv('TRAVIS_JOB_ID') != null) {
+            serviceName = 'travis-ci'
+        }
     }
 
-    File file = new File(COBERTURA_REPORT_PATH)
+    if (!serviceName) {
+        event("StatusError", ["No available CI service, use 'grails help coveralls' to show usage."])
+        exit 1
+    }
+
+    event("StatusUpdate", ["Service Name: $serviceName"])
+    event("StatusUpdate", ["Service Job ID: $serviceJobId"])
+    event("StatusUpdate", ["Coveralls Repo Token: ${repoToken ? 'found' : 'null'}"])
+
+    File file = new File(reportPath)
     if (!file.exists()) {
-        println 'No cobertura report found at: ' + file.absolutePath
-        return
+        event("StatusError", ["No cobertura report found at: ${file.absolutePath}."])
+        exit 1
     }
 
-    println 'Cobertura report file: ' + file.absolutePath
+    event("StatusUpdate", ["Coverage Report: $file.absolutePath"])
 
     def coberturaSourceReportFactory = classLoader.loadClass('grails.plugin.coveralls.coverage.CoberturaSourceReportFactory').newInstance()
     def sourceReports = coberturaSourceReportFactory.createReportList(file)
 
     if (sourceReports.size == 0) {
-        println "No source file found with coverage file:  $COBERTURA_REPORT_PATH"
-        return
+        event("StatusError", ["No source file found in coverage report ${file.absolutePath}."])
+        exit 1
     }
 
-    def jobsAPI = classLoader.loadClass('grails.plugin.coveralls.api.JobsAPI').newInstance()
-    jobsAPI.create(serviceInfo, sourceReports)
+    def jobsAPI = classLoader.loadClass('grails.plugin.coveralls.api.JobsAPI').newInstance(eventListener)
+    def success = jobsAPI.create(serviceName, serviceJobId, repoToken, sourceReports)
+    if (!success) {
+        exit 1
+    }
 
-    println 'done'
+    event("StatusFinal", ["Coverage reports sent successfully!"])
+
 }
 
 setDefaultTarget(coveralls)

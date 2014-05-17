@@ -1,6 +1,5 @@
 package grails.plugin.coveralls.api
 
-import grails.plugin.coveralls.service.ServiceInfo
 import groovyx.net.http.HTTPBuilder
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
@@ -12,34 +11,36 @@ class JobsAPI {
     static API_HOST = 'https://coveralls.io'
     static API_PATH = '/api/v1/jobs'
 
-    def create(ServiceInfo serviceInfo, List sourceReports) {
-        Report report = new Report(serviceInfo, sourceReports)
+    def eventListener
+
+    JobsAPI(eventListener) {
+        this.eventListener = eventListener
+    }
+
+    def create(String serviceName, String serviceJobId, String repoToken, List sourceReports) {
+        Report report = new Report(
+                service_name: serviceName,
+                service_job_id: serviceJobId,
+                repo_token: repoToken,
+                source_files: sourceReports
+        )
         String json = report.toJson()
 
         HTTPBuilder http = new HTTPBuilder(API_HOST + API_PATH)
-        /*http.post(body: [test: true]) { resp ->
-
-            println "POST Success: ${resp.statusLine}"
-            assert resp.statusLine.statusCode == 201
-        }*/
-
-
         http.request(POST) { req ->
             req.entity = MultipartEntityBuilder.create()
                     .addBinaryBody('json_file', json.getBytes('UTF-8'), ContentType.APPLICATION_JSON, 'json_file')
                     .build()
 
-            /*response.success = { resp, reader ->
-                //this.logger.info resp.statusLine.toString()
-                //this.logger.info resp.getAllHeaders().toString()
-                System.out << reader
+            response.success = { resp, reader ->
+                assert resp.status == 200
+                return true
             }
 
             response.failure = { resp, reader ->
-                //this.logger.error resp.statusLine.toString()
-                //this.logger.error resp.getAllHeaders().toString()
-                System.out << reader
-            }*/
+                eventListener?.triggerEvent("StatusError", "Could not post coverage reports: ${resp.statusLine.toString()}")
+                return false
+            }
         }
     }
 

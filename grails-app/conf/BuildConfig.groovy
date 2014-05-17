@@ -16,10 +16,13 @@ grails.project.dependency.resolution = {
         mavenCentral()
     }
     dependencies {
-        compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7') {
+        compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1') {
             excludes 'commons-logging', 'xml-apis', 'groovy'
         }
-        compile 'org.apache.httpcomponents:httpmime:4.3.3'
+        // Latest httpcore and httpmime
+        build 'org.apache.httpcomponents:httpcore:4.3.2'
+        build 'org.apache.httpcomponents:httpclient:4.3.2'
+        build 'org.apache.httpcomponents:httpmime:4.3.3'
     }
     plugins {
         build(':release:3.0.1',
@@ -31,3 +34,15 @@ grails.project.dependency.resolution = {
         }
     }
 }
+
+grails.project.dependency.distribution = {
+    // To deploy run "grails maven-deploy --repository=snapshots"
+    remoteRepository(id: 'snapshots', url: 'http://repository.agorapulse.com/nexus/content/repositories/snapshots/') {
+        authentication username: 'deploy', password: 'riru-rty-ju-ly'
+    }
+    // To deploy run "grails maven-deploy --repository=releases"
+    remoteRepository(id: 'releases', url: 'http://repository.agorapulse.com/nexus/content/repositories/releases/') {
+        authentication username: 'deploy', password: 'riru-rty-ju-ly'
+    }
+}
+grails.project.repos.default = 'snapshots'
