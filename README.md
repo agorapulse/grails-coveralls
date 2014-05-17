@@ -28,6 +28,9 @@ grails.project.dependency.resolution = {
 		plugins {
 				//here go your plugin dependencies
 				build ':coveralls:0.1'
+				test(':code-coverage:1.2.7') {
+                    export = false
+                }
 		}
 }
 ```
@@ -35,16 +38,20 @@ grails.project.dependency.resolution = {
 
 # Config
 
-You can add your config in **Config.groovy** but it is not required, all parameters can be passed as arguments to *coveralls* Gant script.
+You can add your config in **Config.groovy** but it is not required, especially when running Travis CI.
+All parameters can be passed as arguments to *coveralls* Gant script.
 
 ```groovy
 // Single provider
 grails {
     plugin {
         coveralls {
-            report = 'path/to/cobertura.xml'    // Path Cobertura XML coverage report (default to 'target/test-reports/cobertura/coverage.xml')
-            token = '...'                       // Coveralls repo token, not required for Travis CI public repo (required for Travis Pro or other CI).
-            service = 'other'                   // CI Service name (default to 'travis-ci' and 'travis-pro' for Travis)
+            // Cobertura XML coverage report path
+            report = 'path/to/cobertura.xml' // if not defined, default to 'target/test-reports/cobertura/coverage.xml'
+            // Coveralls repo token, not required for Travis CI public repo (required for Travis Pro or other CI).
+            token = '...'
+            // CI Service name (default to 'travis-ci' and 'travis-pro' for Travis)
+            service = 'other'
         }
     }
 }
@@ -57,16 +64,23 @@ grails {
 Add this command to your build process (after testing and coverage report generation).
 
 ```groovy
-// For public repo or if all the settings are defined in your Config.groovy
+// For Travis CI and GitHub public repo or if all the settings are defined in your Config.groovy
 grails coveralls
 // Or
 grails coveralls --token=$REPO_TOKEN --report=target/test-reports/cobertura/coverage.xml
 ```
 
-Travis config file example:
+Example of Travis CI config file for a public repo hosted on GitHub:
 
 ```yml
-//TODO
+language: groovy
+jdk:
+- oraclejdk7
+script:
+- ./grailsw refresh-dependencies
+- ./grailsw "test-app unit: -coverage -xml"
+after_success:
+- ./grailsw coveralls
 ```
 
 # Latest releases
