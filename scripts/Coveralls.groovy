@@ -1,5 +1,4 @@
-includeTargets << grailsScript("_GrailsInit")
-includeTargets << grailsScript("_GrailsClasspath")
+includeTargets << grailsScript("_GrailsBootstrap")
 
 USAGE = """
     coveralls [--report=REPORT] [--token=TOKEN] [--service=SERVICE]
@@ -16,7 +15,7 @@ where
 """
 
 target(coveralls: "Create coverage report and post it to Coveralls.io") {
-    depends(parseArguments)
+    depends(compile, parseArguments)
 
     if (argsMap['help']) {
         println USAGE
