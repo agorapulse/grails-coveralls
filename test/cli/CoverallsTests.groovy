@@ -1,5 +1,7 @@
 import grails.test.AbstractCliTestCase
+import org.junit.Ignore
 
+@Ignore
 class CoverallsTests extends AbstractCliTestCase {
     protected void setUp() {
         super.setUp()
