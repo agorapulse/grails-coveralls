@@ -9,7 +9,8 @@ class CoverallsGrailsPlugin {
     def author = "Benoit Hediard"
     def authorEmail = "ben@benorama.com"
     def title = "Coveralls.io Grails Plugin"
-    def description = '''Integration with Travis CI and Coveralls.io to give you test coverage history and statistics.'''
+    def description = '''The Coveralls Plugin allows you to send Grails code coverage report to Coveralls.
+Coveralls works with your continuous integration server to give you test coverage history and statistics.'''
 
     def documentation = "http://grails.org/plugin/grails-coveralls"
     def license = "APACHE"

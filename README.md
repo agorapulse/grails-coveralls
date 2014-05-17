@@ -1,15 +1,17 @@
 
-Coveralls.io Grails Plugin
+Coveralls Grails Plugin
 =======================
 
 # Introduction
 
-The Coveralls.io Plugin provides a Gant script to automatically send [Grails](http://grails.org/plugin/code-coverage) code coverage report to [Coveralls.io](http://coveralls.io).
-This script can easily be integrated to a build pipeline for continuous delivery/deployment: it works pretty well with [Travis CI](http://travis-ci.org) and [Travis Pro](http://travis-ci.com).
+The Coveralls Plugin allows you to send [Grails code coverage](http://grails.org/plugin/code-coverage) report to [Coveralls](http://coveralls.io).
+[Coveralls](http://coveralls.io) works with your continuous integration server to give you test coverage history and statistics.
 
-It adds one [Grails](http://grails.org) Gant scripts:
+It works pretty well with [Travis CI](http://travis-ci.org) and [Travis Pro](http://travis-ci.com).
 
-- *coveralls* to send coverage report to [Coveralls.io](http://coveralls.io).
+It adds the following [Grails](http://grails.org) Gant scripts:
+
+- *coveralls* to send coverage report to [Coveralls](http://coveralls.io).
 
 # Installation
 
