@@ -28,17 +28,12 @@ target(coveralls: "Create coverage report and post it to Coveralls.io") {
     String serviceName = argsMap['service'] ?: coverallsConfig?.service ?: ''
     def serviceJobId
 
-    if (repoToken) {
-        if (System.getenv('TRAVIS') == 'true' && System.getenv('TRAVIS_JOB_ID') != null) {
-            serviceName = 'travis-pro'
-            serviceJobId = System.getenv('TRAVIS_JOB_ID')
-        } else if (!serviceName) {
-            serviceName = 'other'
-        }
-    } else {
-        if (System.getenv('TRAVIS') == 'true' && System.getenv('TRAVIS_JOB_ID') != null) {
-            serviceName = 'travis-ci'
-        }
+    if (System.getenv('TRAVIS') == 'true' && System.getenv('TRAVIS_JOB_ID') != null) {
+        serviceName = repoToken ? 'travis-pro' : 'travis-ci'
+        serviceJobId = System.getenv('TRAVIS_JOB_ID')
+    } else if (repoToken) {
+        // RepoToken is required for CI service
+        serviceName = 'other'
     }
 
     if (!serviceName) {
