@@ -13,7 +13,7 @@ class CoverallsTests extends AbstractCliTestCase {
 
         execute(["coveralls"])
 
-        assertEquals 0, waitForProcess()
+        assertEquals 1, waitForProcess()
         verifyHeader()
     }
 }

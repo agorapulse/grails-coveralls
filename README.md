@@ -40,7 +40,7 @@ grails.project.dependency.resolution = {
 
 # Config
 
-You can add your config in **Config.groovy** but it is not required, especially when running Travis CI.
+You can add your config in **BuildConfig.groovy** but it is not required, especially when running Travis CI.
 All parameters can be passed as arguments to *coveralls* Gant script.
 
 ```groovy
@@ -74,13 +74,14 @@ grails coveralls --token=$REPO_TOKEN --report=target/test-reports/cobertura/cove
 
 Example of Travis CI config file for a public repo hosted on GitHub:
 
-```yml
+```.yml
+// .travis.yml
 language: groovy
 jdk:
 - oraclejdk7
 script:
 - ./grailsw refresh-dependencies
-- ./grailsw "test-app unit: -coverage -xml"
+- ./grailsw "test-app -coverage -xml"
 after_success:
 - ./grailsw coveralls
 ```
