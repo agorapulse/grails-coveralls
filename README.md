@@ -85,10 +85,10 @@ Example of Travis CI config file for a **public** repo hosted on GitHub:
 language: groovy
 jdk: oraclejdk7
 script:
-- ./grailsw refresh-dependencies
-- ./grailsw "test-app -coverage -xml"
+  - ./grailsw refresh-dependencies
+  - ./grailsw test-app -coverage -xml
 after_success:
-- ./grailsw coveralls
+  - ./grailsw coveralls
 ```
 
 Example of Travis CI config file for a **private** repo hosted on GitHub:
@@ -98,12 +98,12 @@ Example of Travis CI config file for a **private** repo hosted on GitHub:
 language: groovy
 jdk: oraclejdk7
 env:
-- COVERALLS_REPO_TOKEN=your_coveralls_repo_token // Should be encrypted
+  - COVERALLS_REPO_TOKEN=your_coveralls_repo_token // Should be encrypted
 script:
-- ./grailsw refresh-dependencies
-- ./grailsw "test-app -coverage -xml"
+  - ./grailsw refresh-dependencies
+  - ./grailsw test-app -coverage -xml
 after_success:
-- ./grailsw coveralls --token=$COVERALLS_REPO_TOKEN
+  - ./grailsw coveralls --token=$COVERALLS_REPO_TOKEN
 ```
 
 # Latest releases
