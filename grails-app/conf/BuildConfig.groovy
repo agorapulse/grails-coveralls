@@ -34,15 +34,3 @@ grails.project.dependency.resolution = {
         }
     }
 }
-
-grails.project.dependency.distribution = {
-    // To deploy run "grails maven-deploy --repository=snapshots"
-    remoteRepository(id: 'snapshots', url: 'http://repository.agorapulse.com/nexus/content/repositories/snapshots/') {
-        authentication username: 'deploy', password: 'riru-rty-ju-ly'
-    }
-    // To deploy run "grails maven-deploy --repository=releases"
-    remoteRepository(id: 'releases', url: 'http://repository.agorapulse.com/nexus/content/repositories/releases/') {
-        authentication username: 'deploy', password: 'riru-rty-ju-ly'
-    }
-}
-grails.project.repos.default = 'snapshots'

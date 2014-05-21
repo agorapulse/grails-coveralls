@@ -74,7 +74,7 @@ grails coveralls --token=$REPO_TOKEN --report=target/test-reports/cobertura/cove
 
 Example of Travis CI config file for a public repo hosted on GitHub:
 
-```.yml
+```yml
 // .travis.yml
 language: groovy
 jdk:
@@ -88,7 +88,7 @@ after_success:
 
 # Latest releases
 
-* 2014-05-07 **V0.1** : Initial release
+* 2014-05-21 **V0.1** : Initial release
 
 # Bugs
 
