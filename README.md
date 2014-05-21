@@ -25,11 +25,16 @@ grails.project.dependency.resolution = {
                 //your repositories
         }
         dependencies {
-                //your dependencies
+                // Latest httpcore and httpmime for Coveralls plugin
+                build 'org.apache.httpcomponents:httpcore:4.3.2'
+                build 'org.apache.httpcomponents:httpclient:4.3.2'
+                build 'org.apache.httpcomponents:httpmime:4.3.3'
         }
 		plugins {
-				//here go your plugin dependencies
-				build ':coveralls:0.1'
+				// Coveralls plugin
+				build(':coveralls:0.1', ':rest-client-builder:1.0.3') {
+				    export = false
+				}
 				test(':code-coverage:1.2.7') {
                     export = false
                 }
@@ -40,19 +45,20 @@ grails.project.dependency.resolution = {
 
 # Config
 
+Create a [Coveralls.io](http://coveralls.io) account and add the [GitHub](http://github.com) repositories you want to monitor.
+
 You can add your config in **BuildConfig.groovy** but it is not required, especially when running Travis CI.
 All parameters can be passed as arguments to *coveralls* Gant script.
 
 ```groovy
-// Single provider
 grails {
     plugin {
         coveralls {
             // Cobertura XML coverage report path
             report = 'path/to/cobertura.xml' // if not defined, default to 'target/test-reports/cobertura/coverage.xml'
-            // Coveralls repo token, not required for Travis CI public repo (required for Travis Pro or other CI).
+            // Coveralls repo token, not required for Travis CI public repo (required for Travis Pro with private repo or other CI).
             token = '...'
-            // CI Service name (default to 'travis-ci' and 'travis-pro' for Travis)
+            // CI Service name (not required for Travis, automatically detected for 'travis-ci' and 'travis-pro')
             service = 'other'
         }
     }
@@ -69,16 +75,15 @@ Add this command to your build process (after testing and coverage report genera
 // For Travis CI and GitHub public repo or if all the settings are defined in your Config.groovy
 grails coveralls
 // Or
-grails coveralls --token=$REPO_TOKEN --report=target/test-reports/cobertura/coverage.xml
+grails coveralls --token=$COVERALLS_REPO_TOKEN --report=target/test-reports/cobertura/coverage.xml
 ```
 
-Example of Travis CI config file for a public repo hosted on GitHub:
+Example of Travis CI config file for a **public** repo hosted on GitHub:
 
 ```yml
 // .travis.yml
 language: groovy
-jdk:
-- oraclejdk7
+jdk: oraclejdk7
 script:
 - ./grailsw refresh-dependencies
 - ./grailsw "test-app -coverage -xml"
@@ -86,8 +91,24 @@ after_success:
 - ./grailsw coveralls
 ```
 
+Example of Travis CI config file for a **private** repo hosted on GitHub:
+
+```yml
+// .travis.yml
+language: groovy
+jdk: oraclejdk7
+env:
+- COVERALLS_REPO_TOKEN=your_coveralls_repo_token // Should be encrypted
+script:
+- ./grailsw refresh-dependencies
+- ./grailsw "test-app -coverage -xml"
+after_success:
+- ./grailsw coveralls --token=$COVERALLS_REPO_TOKEN
+```
+
 # Latest releases
 
+* 2014-05-21 **V0.1.1** : Plugin descriptor + README update
 * 2014-05-21 **V0.1** : Initial release
 
 # Bugs
