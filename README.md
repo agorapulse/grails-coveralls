@@ -32,7 +32,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				// Coveralls plugin
-				build(':coveralls:0.1', ':rest-client-builder:1.0.3') {
+				build(':coveralls:0.1.2', ':rest-client-builder:1.0.3') {
 				    export = false
 				}
 				test(':code-coverage:1.2.7') {
@@ -108,6 +108,7 @@ after_success:
 
 # Latest releases
 
+* 2014-05-26 **V0.1.2** : Fix source directories detection
 * 2014-05-21 **V0.1.1** : Plugin descriptor + README update
 * 2014-05-21 **V0.1** : Initial release
 
