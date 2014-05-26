@@ -18,6 +18,10 @@ class CoberturaSourceReportFactory implements SourceReportFactory {
 		Node coverage = parser.parse(file)
 
 		List<String> sourceDirectories = coverage.sources.source*.text()
+        sourceDirectories = sourceDirectories.collect {
+            // Remove carriage returns and extra spaces
+            it.replaceAll("[\n\r]", "").trim()
+        }
 
 		// mapping of [filename] => [hits per line]
 		Map<String, Map<Integer, Integer>> hitsPerLineMapForFilename = [:]
