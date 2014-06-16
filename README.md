@@ -32,7 +32,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				// Coveralls plugin
-				build(':coveralls:0.1.2', ':rest-client-builder:1.0.3') {
+				build(':coveralls:0.1.3', ':rest-client-builder:1.0.3') {
 				    export = false
 				}
 				test(':code-coverage:1.2.7') {
@@ -109,7 +109,7 @@ after_success:
 ## Configuring Coveralls
  
 Source code is not stored or Coveralls, but you can access coverage detail for each files. 
-In order to do that, you'll just need to update source root path settings on Coverrals to remove Travis local path (e.g.: `/home/travis/build/github-username/github-project-name`).
+In order to do that, you'll just need to update source root path settings on Coverrals to remove Travis local path (e.g.: /home/travis/build/github-username/github-project-name`).
 
 # Latest releases
 
