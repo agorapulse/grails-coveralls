@@ -1,7 +1,7 @@
 class CoverallsGrailsPlugin {
 
-    def version = "0.1.2"
-    def grailsVersion = "2.3 > *"
+    def version = "0.1.3"
+    def grailsVersion = "2.1 > *"
     def pluginExcludes = [
             "grails-app/views/error.gsp"
     ]

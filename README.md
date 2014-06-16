@@ -67,7 +67,7 @@ grails {
 
 # Usage
 
-## Sending your coverage reports to Coveralls.io
+## Sending your coverage reports to Coveralls
 
 Add this command to your build process (after testing and coverage report generation).
 
@@ -106,8 +106,14 @@ after_success:
   - ./grailsw coveralls --token=$COVERALLS_REPO_TOKEN
 ```
 
+## Configuring Coveralls
+ 
+Source code is not stored or Coveralls, but you can access coverage detail for each files. 
+In order to do that, you'll just need to update source root path settings on Coverrals to remove Travis local path (e.g.: `/home/travis/build/github-username/github-project-name`).
+
 # Latest releases
 
+* 2014-06-16 **V0.1.3** : Grails version requirement downgraded to 2.1.* 
 * 2014-05-26 **V0.1.2** : Fix source directories detection
 * 2014-05-21 **V0.1.1** : Plugin descriptor + README update
 * 2014-05-21 **V0.1** : Initial release
