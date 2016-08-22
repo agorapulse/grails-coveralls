@@ -1,5 +1,6 @@
 package grails.plugin.coveralls.api
 
+import grails.plugin.coveralls.util.HTTPClientHelper
 import groovyx.net.http.HTTPBuilder
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MultipartEntityBuilder
@@ -8,7 +9,8 @@ import static groovyx.net.http.Method.POST
 
 class JobsAPI {
 
-    static API_HOST = 'https://coveralls.io'
+    static API_PROTOCOL = 'https'
+    static API_HOST = API_PROTOCOL + '://coveralls.io'
     static API_PATH = '/api/v1/jobs'
 
     def eventListener
@@ -27,6 +29,7 @@ class JobsAPI {
         String json = report.toJson()
 
         HTTPBuilder http = new HTTPBuilder(API_HOST + API_PATH)
+        HTTPClientHelper.configureProxy(http, API_HOST, API_PROTOCOL)
         http.request(POST) { req ->
             req.entity = MultipartEntityBuilder.create()
                     .addBinaryBody('json_file', json.getBytes('UTF-8'), ContentType.APPLICATION_JSON, 'json_file')
