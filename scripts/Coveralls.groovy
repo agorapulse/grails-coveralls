@@ -1,7 +1,7 @@
 includeTargets << grailsScript("_GrailsBootstrap")
 
 USAGE = """
-    coveralls [--report=REPORT] [--token=TOKEN] [--service=SERVICE]
+    coveralls [--report=REPORT] [--token=TOKEN] [--service=SERVICE] [--gitSync]
 
 where
     REPORT          = Cobertura XML coverage report.
@@ -12,6 +12,9 @@ where
 
     SERVICE         = Service name, not required for Travis (automatically detected).
                     (default: grails.plugin.coverals.service)
+
+    GITSYNC        = if present will send Git information to coveralls (automatically detected)
+                    (default: false)
 """
 
 target(coveralls: "Create coverage report and post it to Coveralls.io") {
@@ -26,6 +29,8 @@ target(coveralls: "Create coverage report and post it to Coveralls.io") {
     String reportPath = argsMap['report'] ?: coverallsConfig?.report ?: 'target/test-reports/cobertura/coverage.xml'
     String repoToken = argsMap['token'] ?: coverallsConfig?.token ?: System.getenv('COVERALLS_REPO_TOKEN')
     String serviceName = argsMap['service'] ?: coverallsConfig?.service ?: ''
+    Boolean gitSync = argsMap['gitSync'] ?: coverallsConfig?.gitSync ?: false
+
     def serviceJobId
 
     if (System.getenv('TRAVIS') == 'true' && System.getenv('TRAVIS_JOB_ID') != null) {
@@ -60,9 +65,18 @@ target(coveralls: "Create coverage report and post it to Coveralls.io") {
         event("StatusError", ["No source file found in coverage report ${file.absolutePath}."])
         exit 1
     }
-
     def jobsAPI = classLoader.loadClass('grails.plugin.coveralls.api.JobsAPI').newInstance(eventListener)
-    def success = jobsAPI.create(serviceName, serviceJobId, repoToken, sourceReports)
+
+    def success
+    if (gitSync) {
+        event("StatusUpdate", ["Collecting git information to send to coveralls"])
+        def gitInfoFactory = classLoader.loadClass('grails.plugin.coveralls.git.GitInfoFactory').newInstance()
+        gitReport = gitInfoFactory.createReport()
+        success = jobsAPI.create(serviceName, serviceJobId, repoToken, sourceReports, gitReport)
+    } else {
+        success = jobsAPI.create(serviceName, serviceJobId, repoToken, sourceReports)
+    }
+
     if (!success) {
         exit 1
     }
