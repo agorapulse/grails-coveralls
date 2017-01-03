@@ -8,10 +8,10 @@ import groovy.json.JsonBuilder
  * The model class of the report for Coveralls' format.
  */
 class Report {
-	String service_job_id
-	String service_name
-	String repo_token
-	List<SourceReport> source_files
+    String service_job_id
+    String service_name
+    String repo_token
+    List<SourceReport> source_files
     GitReport git // Optional
 
     public Map ignoreNull() {

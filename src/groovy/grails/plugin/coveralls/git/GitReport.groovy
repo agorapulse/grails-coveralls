@@ -6,11 +6,6 @@ class GitReport {
     Head head
     String branch
     List<Remotes> remotes
-
-    public String toString() {
-        JsonBuilder json = new JsonBuilder(this)
-        return json.toString()
-    }
 }
 
 class Head {
