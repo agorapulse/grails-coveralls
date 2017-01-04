@@ -78,6 +78,13 @@ grails coveralls
 grails coveralls --token=$COVERALLS_REPO_TOKEN --report=target/test-reports/cobertura/coverage.xml
 ```
 
+You can send git metadata (automatically detected) to your coveralls report
+git must be installed in your machine / build server
+
+```groovy
+grails coveralls --token=$COVERALLS_REPO_TOKEN --gitSync
+```
+
 Example of Travis CI config file for a **public** repo hosted on GitHub:
 
 ```yml
